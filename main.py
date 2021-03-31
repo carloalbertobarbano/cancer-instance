@@ -9,6 +9,7 @@ import segmentation_models_pytorch as smp
 from tqdm import tqdm
 from torch.utils import data
 
+import wandb
 import argparse
 import os
 import random
@@ -176,7 +177,7 @@ if __name__ == '__main__':
     wandb.init(
         project='cancer-instance'
     )
-    
+
     main(config)
 
     
