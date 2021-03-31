@@ -94,7 +94,7 @@ def main(config):
         activation='sigmoid'
     ).to(config.device)
 
-    optimizer = torch.optim.SGD(model.parameters(), lr=config.lr, momentum=config.momentum)
+    optimizer = torch.optim.SGD(model.parameters(), lr=config.lr, weight_decay=config.weight_decay, momentum=config.momentum)
     scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.1)
     criterion = smp.utils.losses.DiceLoss()
 
