@@ -131,7 +131,7 @@ def main(config):
     test_batch_im = torchvision.utils.make_grid(test_batch_im)
     test_batch_gt = torch.argmax(test_batch_gt, dim=1)
     test_batch_gt = torch.cat([color_mapping[test_batch_gt[i]] for i in range(test_batch_gt.shape[0])], dim=0)
-    test_batch_gt = torchvision.utils.make_grid(test_batch_gt, normalize=False).numpy().astype('float').transpose(0, 2, 1)
+    test_batch_gt = torchvision.utils.make_grid(test_batch_gt, normalize=False).numpy().astype('float').transpose(2, 1, 0)
 
     wandb.log({
         'test_batch': wandb.Image(test_batch_im),
