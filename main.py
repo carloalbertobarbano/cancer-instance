@@ -96,16 +96,15 @@ def main(config):
 
     optimizer = torch.optim.SGD(model.parameters(), lr=config.lr, momentum=config.momentum)
     scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.1)
-    criterion = torch.nn.BCELoss()
+    criterion = smp.utils.losses.DiceLoss()
 
-    loss = smp.utils.losses.DiceLoss()
     metrics = [
         smp.utils.metrics.IoU(threshold=0.5),
     ]
     
     train_epoch = smp.utils.train.TrainEpoch(
         model, 
-        loss=loss, 
+        loss=criterion, 
         metrics=metrics, 
         optimizer=optimizer,
         device=config.device,
@@ -114,7 +113,7 @@ def main(config):
 
     valid_epoch = smp.utils.train.ValidEpoch(
         model, 
-        loss=loss, 
+        loss=criterion, 
         metrics=metrics, 
         device=condif.device,
         verbose=True,
