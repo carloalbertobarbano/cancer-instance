@@ -136,7 +136,7 @@ def main(config):
     wandb.log({
         'test_batch': wandb.Image(test_batch_im),
         'test_batch_gt': wandb.Image(test_batch_gt)
-    })
+    }, commit=False)
     
     for epoch in range(config.epochs):
         print(f'-------- Epoch {epoch+1} --------')
@@ -153,7 +153,7 @@ def main(config):
         }, commit=False)
 
         with torch.no_grad():
-            masks = model(test_batch_im.to(config.device)).cpu()
+            masks = model(test_batch[0].to(config.device)).cpu()
             masks = torch.argmax(outputs, dim=1)
             masks = torch.cat([color_mapping[masks[i]] for i in range(masks.shape[0])], dim=0)
         masks = torchvision.utils.make_grid(masks).numpy().astype('float')
