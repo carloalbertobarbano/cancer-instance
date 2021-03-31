@@ -149,7 +149,8 @@ def main(config):
         wandb.log({
             'train': train,
             'valid': valid,
-            'test': test
+            'test': test,
+            'iou': valid['iou_score']
         }, commit=False)
 
         with torch.no_grad():
@@ -176,6 +177,7 @@ if __name__ == '__main__':
     parser.add_argument('--batch_size', type=int, default=4)
     parser.add_argument('--epochs', type=int, default=10)
     parser.add_argument('--lr', type=float, default=1e-4)
+    parser.add_argument('--weight_decay', type=float, default=1e-5)
     parser.add_argument('--momentum', type=float, default=0.9)
 
     config = parser.parse_args()
