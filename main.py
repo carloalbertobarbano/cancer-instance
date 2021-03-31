@@ -154,7 +154,7 @@ def main(config):
 
         with torch.no_grad():
             masks = model(test_batch[0].to(config.device)).cpu()
-            masks = torch.argmax(outputs, dim=1)
+            masks = torch.argmax(masks, dim=1)
             masks = torch.cat([color_mapping[masks[i]] for i in range(masks.shape[0])], dim=0)
         masks = torchvision.utils.make_grid(masks).numpy().astype('float')
 
