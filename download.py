@@ -5,8 +5,11 @@ import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--root', type=str, default=f'{os.path.expanduser("~")}/data/')
+parser.add_argument('--dst', type=str, default=f'{os.path.expanduser("~")}/data/cancer-instance')
 args = parser.parse_args()
+
 dataroot = args.root
+dataset_folder = args.dst
 
 # Fetch data from Google Drive
 # URL for the dataset
@@ -17,6 +20,7 @@ download_path = f'{dataroot}/cancer_instance.tar.xz'
 # Create required directories 
 if not os.path.exists(dataroot):
   os.makedirs(dataroot)
+
 if not os.path.exists(dataset_folder):
   os.makedirs(dataset_folder)
 
