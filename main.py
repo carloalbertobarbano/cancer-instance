@@ -130,7 +130,7 @@ def main(config):
     test_batch_im, test_batch_gt = test_batch 
     test_batch_im = torchvision.utils.make_grid(test_batch_im)
     test_batch_gt = torch.argmax(test_batch_gt, dim=1)
-    test_batch_gt = torch.stack([color_mapping[test_batch_gt[i]] for i in range(test_batch_gt.shape[0])], dim=0)
+    test_batch_gt = torch.cat([color_mapping[test_batch_gt[i]] for i in range(test_batch_gt.shape[0])], dim=0)
     test_batch_gt = torchvision.utils.make_grid(test_batch_gt, normalize=False).numpy().astype('float')
 
     wandb.log({
@@ -140,14 +140,14 @@ def main(config):
     
     for epoch in range(config.epochs):
         print(f'-------- Epoch {epoch+1} --------')
-        #train = train_epoch.run(train_loader)
+        train = train_epoch.run(train_loader)
         valid = valid_epoch.run(valid_loader)
         test = valid_epoch.run(test_loader)
 
         scheduler.step()
         
         wandb.log({
-            #'train': train,
+            'train': train,
             'valid': valid,
             'test': test
         }, commit=False)
