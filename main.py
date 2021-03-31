@@ -78,7 +78,7 @@ def main(config):
         albumentations.pytorch.ToTensorV2()
     ])
 
-    dataset = CancerInstance(root=f'{os.path.expanduser("~")}/data/cancer-instance', T=T)
+    dataset = CancerInstance(root=config.root, T=T)
     train_dataset, valid_dataset, test_dataset = data.random_split(dataset, [4425, 1106, 2370]) #0.7*0.8, 0.7*0.2, 0.3
 
     train_loader = data.DataLoader(train_dataset, batch_size=config.batch_size, shuffle=True, num_workers=4, pin_memory=True)
@@ -165,6 +165,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--seed', type=int, default=42) 
     parser.add_argument('--device', type=str, default='cuda')
+    parser.add_argument('--root', type=str, default=f'{os.path.expanduser("~")}/data/cancer-instance')
+
 
     parser.add_argument('--batch_size', type=int, default=4)
     parser.add_argument('--epochs', type=int, default=10)
