@@ -42,8 +42,8 @@ class CancerInstance(data.Dataset):
         image, mask = self.images[index], self.masks[index]
 
         image = cv2.cvtColor(cv2.imread(image), cv2.COLOR_BGR2RGB) #256x256x3
-        mask = np.load(mask) #256x256x6
-
+        mask = np.load(mask).astype('float').transpose(2, 0, 1) #256x256x6
+    
         t = self.T(image=image, mask=mask)
         return t['image'], t['mask']
 
@@ -90,7 +90,7 @@ def main(config):
         encoder_name="resnet18",        
         encoder_weights="imagenet",     
         in_channels=3,                 
-        classes=5,
+        classes=6,
         activation='sigmoid'
     ).to(config.device)
 
@@ -119,25 +119,30 @@ def main(config):
         verbose=True,
     )
 
-    color_mapping = torch.tensor([[255, 0, 0], #neoplastic
-                                  [0, 255, 0], #infl
-                                  [0, 0, 255], #connective/soft
-                                  [255, 255, 0], #dead
-                                  [0, 255, 255], #ephitelia
+    color_mapping = torch.tensor([[1., 0, 0], #neoplastic
+                                  [0, 1., 0], #infl
+                                  [0, 0, 1.], #connective/soft
+                                  [1., 1., 0], #dead
+                                  [0, 1., 1.], #ephitelia
                                   [0, 0, 0]]) #background
 
     test_batch = next(iter(test_loader))
-    test_batch_im = torchvision.utils.make_grid(test_batch)
+    test_batch_im, test_batch_gt = test_batch 
+    test_batch_im = torchvision.utils.make_grid(test_batch_im)
+    test_batch_gt = torch.argmax(test_batch_gt, dim=1)
+    test_batch_gt = torch.cat([color_mapping[test_batch_gt[i]] for i in range(test_batch_gt.shape[0])], dim=0)
+    test_batch_gt = torchvision.utils.make_grid(test_batch_gt, normalize=False).numpy().astype('float')
 
     wandb.log({
-        'test_batch': wandb.Image(test_batch_im)
+        'test_batch': wandb.Image(test_batch_im),
+        'test_batch_gt': wandb.Image(test_batch_gt)
     }, commit=False)
     
     for epoch in range(config.epochs):
         print(f'-------- Epoch {epoch+1} --------')
-        train = train_epoch(train_loader)
-        valid = valid_epoch(valid_loader)
-        test = valid_epoch(test_loader)
+        train = train_epoch.run(train_loader)
+        valid = valid_epoch.run(valid_loader)
+        test = valid_epoch.run(test_loader)
 
         scheduler.step()
         
@@ -148,10 +153,10 @@ def main(config):
         }, commit=False)
 
         with torch.no_grad():
-            masks = model(test_batch)
+            masks = model(test_batch_im)
             masks = torch.argmax(outputs, dim=1)
             masks = torch.cat([color_mapping[m] for m in masks], dim=0)
-        masks = torchvision.utils.make_grid(masks)
+        masks = torchvision.utils.make_grid(masks).numpy().astype('float')
 
         wandb.log({
             'masks': wandb.Image(masks)
