@@ -5,7 +5,7 @@ import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--root', type=str, default=f'{os.path.expanduser("~")}/data/')
-parser.add_argument('--dst', type=str, default=f'{os.path.expanduser("~")}/data/cancer-instance')
+parser.add_argument('--dst', type=str, default=f'{os.path.expanduser("~")}/data/')
 args = parser.parse_args()
 
 dataroot = args.root

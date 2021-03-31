@@ -115,7 +115,7 @@ def main(config):
         model, 
         loss=criterion, 
         metrics=metrics, 
-        device=condif.device,
+        device=config.device,
         verbose=True,
     )
 
