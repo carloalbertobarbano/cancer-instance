@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: cancer-instance-copy-temp
+spec:
+  restartPolicy: Never
+  containers:
+      - name: container-copy
+        image: carlduke/hello-k8s:latest
+        command: ["sleep", "3600"]
+        volumeMounts:
+          - name: cancer-instance #this is just a local name
+            mountPath: /data
+  volumes:
+      - name: cancer-instance
+        persistentVolumeClaim:
+          claimName: cancer-instance-dataset

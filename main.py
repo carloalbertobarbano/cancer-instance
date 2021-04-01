@@ -171,7 +171,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--seed', type=int, default=42) 
     parser.add_argument('--device', type=str, default='cuda')
-    parser.add_argument('--root', type=str, default=f'{os.path.expanduser("~")}/data/cancer-instance')
+    parser.add_argument('--root', type=str, default=f'/data/cancer-instance')
 
 
     parser.add_argument('--batch_size', type=int, default=4)

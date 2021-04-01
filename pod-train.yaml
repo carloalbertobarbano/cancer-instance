@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: Pod
+metadata:
+ name: cancer-instance-train
+spec:
+  restartPolicy: Never
+  containers:
+    - name: train
+      image: carlduke/cancer-instance-train:latest
+      env:
+        - name: WANDB_BASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: carlo-wandbai-auth
+              key: host
+        - name: WANDB_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: carlo-wandbai-auth
+              key: key
+      command: ["wandb", "agent", "carloalbertobarbano/cancer-instance/x8v2bj0s"]
+      resources:
+        limits:
+          nvidia.com/gpu: 1
+        requests:
+          nvidia.com/gpu: 1
+      volumeMounts:
+            - name: cancer-instance #this is just a local name
+              mountPath: /data
+  volumes:
+      - name: cancer-instance
+        persistentVolumeClaim:
+          claimName: cancer-instance-dataset
