@@ -25,9 +25,14 @@ spec:
         requests:
           nvidia.com/gpu: 1
       volumeMounts:
-            - name: cancer-instance #this is just a local name
+            - name: cancer-instance
               mountPath: /data
+            - name: shm
+              mountPath: /dev/shm
   volumes:
       - name: cancer-instance
         persistentVolumeClaim:
           claimName: cancer-instance-dataset
+      - name: shm
+        emptyDir:
+          medium: Memory
