@@ -23,3 +23,5 @@ parameters:
     momentum:
         min: 0.0
         max: 0.9
+    root:
+        value: "/home/barbano/data/cancer-instance"
