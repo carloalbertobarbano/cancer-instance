@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Pod
 metadata:
- name: cancer-instance-train
+ name: carlo-uc2-train
 spec:
   restartPolicy: Never
   containers:
@@ -18,7 +18,7 @@ spec:
             secretKeyRef:
               name: carlo-wandbai-auth
               key: key
-      command: ["wandb", "agent", "carloalbertobarbano/cancer-instance/x8v2bj0s"]
+      command: ["wandb", "agent", "carloalbertobarbano/cancer-instance/izkfajrl"]
       resources:
         limits:
           nvidia.com/gpu: 1

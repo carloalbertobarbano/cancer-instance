@@ -1,4 +1,4 @@
-program: main.py
+program: /main.py
 name: "cancer instance"
 command:
     - ${env}
@@ -12,16 +12,17 @@ metric:
 parameters:
     lr:
       min: 0.0001
-      max: 0.001
+      max: 0.01
     weight_decay:
       min: 1e-5
       max: 1e-4
     batch_size:
         values: [4, 8, 12, 16]
     epochs:
-        value: 20
+        value: 50
     momentum:
         min: 0.0
         max: 0.9
     root:
-        value: "/home/barbano/data/cancer-instance"
+        #value: "/home/barbano/data/cancer-instance"
+        value: '/data/cancer-instance'

@@ -57,6 +57,21 @@ class DiceScore(torch.nn.Module):
         intersection = (iflat * tflat).sum()
         return ((2.0 * intersection + smooth) / (iflat.sum() + tflat.sum() + smooth))
 
+class ChannelDiceLoss(smp.utils.base.Loss):
+    def __init__(self, eps=1., beta=1., activation=None, **kwargs):
+        super().__init__(**kwargs)
+        self.dice_loss = smp.utils.losses.DiceLoss(eps=eps, beta=beta, activation=activation)
+        
+    def forward(self, y_pr, y_gt):
+        loss = []
+
+        for i in range(y_pr.shape[1]):
+            channel_loss = self.dice_loss(y_pr[:, i][:, None], y_gt[:, i][:, None])
+            loss.append(channel_loss)
+        
+        return torch.stack(loss, dim=0).mean()
+
+
 def run(model, dataloader, criterion, optimizer, device):
     train = optimizer is not None
     tot_loss = 0.
@@ -68,7 +83,7 @@ def run(model, dataloader, criterion, optimizer, device):
         with torch.set_grad_enabled(train):
             output = model(data)
 
-
+ 
 def main(config):
     set_seed(config.seed)
 
@@ -91,12 +106,12 @@ def main(config):
         encoder_weights="imagenet",     
         in_channels=3,                 
         classes=6,
-        activation='sigmoid'
+        activation='softmax'
     ).to(config.device)
 
     optimizer = torch.optim.SGD(model.parameters(), lr=config.lr, weight_decay=config.weight_decay, momentum=config.momentum)
     scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.1)
-    criterion = smp.utils.losses.DiceLoss()
+    criterion = ChannelDiceLoss()
 
     metrics = [
         smp.utils.metrics.IoU(threshold=0.5),
@@ -175,8 +190,8 @@ if __name__ == '__main__':
 
 
     parser.add_argument('--batch_size', type=int, default=4)
-    parser.add_argument('--epochs', type=int, default=10)
-    parser.add_argument('--lr', type=float, default=1e-4)
+    parser.add_argument('--epochs', type=int, default=50)
+    parser.add_argument('--lr', type=float, default=1e-3)
     parser.add_argument('--weight_decay', type=float, default=1e-5)
     parser.add_argument('--momentum', type=float, default=0.9)
 
