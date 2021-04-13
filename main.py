@@ -61,6 +61,33 @@ class ChannelDiceLoss(smp.utils.base.Loss):
         
         return torch.stack(loss, dim=0).mean()
 
+class AMPTrainEpoch(smp.utils.train.TrainEpoch):
+    def __init__(self, model, loss, metrics, optimizer, device='cpu', verbose=True):
+        super().__init__(
+            model=model,
+            loss=loss,
+            metrics=metrics,
+            stage_name='train',
+            device=device,
+            verbose=verbose,
+        )
+
+        self.scaler = torch.cuda.amp.GradScaler()
+
+    def batch_update(self, x, y):
+        self.optimizer.zero_grad()
+
+        with torch.cuda.amp.autocast(): 
+            prediction = self.model.forward(x)
+            loss = self.loss(prediction, y)
+        
+        self.scaler.scale(loss).backward()
+        self.scaler.step(self.optimizer)
+        self.scaler.update()
+
+        return loss, prediction
+    
+
 def run(model, dataloader, criterion, optimizer, device):
     train = optimizer is not None
     tot_loss = 0.
@@ -106,7 +133,8 @@ def main(config):
         smp.utils.metrics.IoU(threshold=0.5),
     ]
     
-    train_epoch = smp.utils.train.TrainEpoch(
+    trainer = AMPTrainEpoch if config.amp else smp.utils.train.TrainEpoch
+    train_epoch = trainer(
         model, 
         loss=criterion, 
         metrics=metrics, 
@@ -177,6 +205,7 @@ if __name__ == '__main__':
     parser.add_argument('--device', type=str, default='cuda')
     parser.add_argument('--root', type=str, default=f'/data/cancer-instance')
 
+    parser.add_argument('--amp', action='store_true', help='Enable mixed precision training')
 
     parser.add_argument('--batch_size', type=int, default=4)
     parser.add_argument('--epochs', type=int, default=50)
@@ -186,9 +215,7 @@ if __name__ == '__main__':
 
     config = parser.parse_args()
 
-    wandb.init(
-        project='cancer-instance'
-    )
+    wandb.init(project='cancer-instance')
 
     main(config)
 
