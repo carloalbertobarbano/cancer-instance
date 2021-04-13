@@ -61,7 +61,7 @@ class ChannelDiceLoss(smp.utils.base.Loss):
         
         return torch.stack(loss, dim=0).mean()
 
-class AMPTrainEpoch(smp.utils.train.TrainEpoch):
+class AmpTrainEpoch(smp.utils.train.TrainEpoch):
     def __init__(self, model, loss, metrics, optimizer, device='cpu', verbose=True):
         super().__init__(
             model=model,
@@ -86,21 +86,10 @@ class AMPTrainEpoch(smp.utils.train.TrainEpoch):
         self.scaler.update()
 
         return loss, prediction
-    
-
-def run(model, dataloader, criterion, optimizer, device):
-    train = optimizer is not None
-    tot_loss = 0.
-
-    model.train(train)
-    for data, masks in tqdm(dataloader, leave=False):
-        data, masks = data.to(device), masks.to(device)
-
-        with torch.set_grad_enabled(train):
-            output = model(data)
-
  
 def main(config):
+    print(config)
+    
     set_seed(config.seed)
 
     print('=> Loading data')
@@ -133,7 +122,7 @@ def main(config):
         smp.utils.metrics.IoU(threshold=0.5),
     ]
     
-    trainer = AMPTrainEpoch if config.amp else smp.utils.train.TrainEpoch
+    trainer = AmpTrainEpoch if config.amp else smp.utils.train.TrainEpoch
     train_epoch = trainer(
         model, 
         loss=criterion, 
