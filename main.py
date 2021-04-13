@@ -213,6 +213,7 @@ if __name__ == '__main__':
     parser.add_argument('--weight_decay', type=float, default=1e-5)
     parser.add_argument('--momentum', type=float, default=0.9)
 
+    parser.set_defaults(amp=False)
     config = parser.parse_args()
 
     wandb.init(project='cancer-instance')
