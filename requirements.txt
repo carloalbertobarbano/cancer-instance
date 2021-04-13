@@ -4,8 +4,8 @@ Pillow==8.1.2
 scikit-learn==0.24.1
 scipy==1.6.1
 tabulate==0.8.9
-torch==1.8.0
-torchvision==0.9.0
+#torch==1.8.0
+#torchvision==0.9.0
 tqdm==4.59.0
 wandb==0.10.22
 gdown==3.12.2
