@@ -67,7 +67,7 @@ class AMPTrainEpoch(smp.utils.train.TrainEpoch):
             model=model,
             loss=loss,
             metrics=metrics,
-            stage_name='train',
+            optimizer=optimizer,
             device=device,
             verbose=verbose,
         )
