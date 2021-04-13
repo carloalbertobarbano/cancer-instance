@@ -5,7 +5,8 @@ command:
     - ${env}
     - python3
     - ${program}
-    - --amp ${args}
+    - ${args}
+    - --amp
 method: grid
 parameters:
     lr:
