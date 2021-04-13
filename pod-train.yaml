@@ -18,7 +18,7 @@ spec:
             secretKeyRef:
               name: carlo-wandbai-auth
               key: key
-      command: ["wandb", "agent", "carloalbertobarbano/k8s-benchmark/ej9nbb37"]
+      command: ["wandb", "agent", "carloalbertobarbano/k8s-benchmark-amp/xxedownx"]
       resources:
         limits:
           nvidia.com/gpu: 1
