@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Pod
 metadata:
- name: carlo-uc2-train
+ name: carlo-uc2-train-amp
 spec:
   restartPolicy: Never
   containers:
