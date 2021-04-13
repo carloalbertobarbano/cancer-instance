@@ -47,16 +47,6 @@ class CancerInstance(data.Dataset):
         t = self.T(image=image, mask=mask)
         return t['image'], t['mask']
 
-class DiceScore(torch.nn.Module):
-    __name__ = 'dice_score'
-
-    def forward(self, input, target):
-        smooth = 1.0
-        iflat = input.view(-1)
-        tflat = target.view(-1)
-        intersection = (iflat * tflat).sum()
-        return ((2.0 * intersection + smooth) / (iflat.sum() + tflat.sum() + smooth))
-
 class ChannelDiceLoss(smp.utils.base.Loss):
     def __init__(self, eps=1., beta=1., activation=None, **kwargs):
         super().__init__(**kwargs)
@@ -70,7 +60,6 @@ class ChannelDiceLoss(smp.utils.base.Loss):
             loss.append(channel_loss)
         
         return torch.stack(loss, dim=0).mean()
-
 
 def run(model, dataloader, criterion, optimizer, device):
     train = optimizer is not None
