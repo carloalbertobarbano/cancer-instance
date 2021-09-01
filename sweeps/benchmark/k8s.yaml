@@ -20,3 +20,5 @@ parameters:
       value: 0.99
     root:
       value: '/data/cancer-instance'
+    amp:
+      values: [0, 1]

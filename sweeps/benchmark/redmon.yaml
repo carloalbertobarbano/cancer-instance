@@ -20,3 +20,5 @@ parameters:
       value: 0.99
     root:
       value: "/home/barbano/data/cancer-instance"
+    amp:
+      values: [0, 1]

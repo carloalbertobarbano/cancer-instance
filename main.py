@@ -194,7 +194,7 @@ if __name__ == '__main__':
     parser.add_argument('--device', type=str, default='cuda')
     parser.add_argument('--root', type=str, default=f'/data/cancer-instance')
 
-    parser.add_argument('--amp', action='store_true', help='Enable mixed precision training')
+    parser.add_argument('--amp', type=int, default=0, help='Enable mixed precision training')
 
     parser.add_argument('--batch_size', type=int, default=4)
     parser.add_argument('--epochs', type=int, default=50)
@@ -202,11 +202,10 @@ if __name__ == '__main__':
     parser.add_argument('--weight_decay', type=float, default=1e-5)
     parser.add_argument('--momentum', type=float, default=0.9)
 
-    parser.set_defaults(amp=False)
     config = parser.parse_args()
+    config.amp = config.amp == 1
 
     wandb.init(project='cancer-instance')
-
     main(config)
 
     
